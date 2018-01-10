@@ -1,10 +1,14 @@
-FROM ubuntu:16.04
+# http://phusion.github.io/baseimage-docker/
+FROM phusion/baseimage:0.9.22
 
 LABEL version="1.0.4" \
-  maintainer="Carlos Paulino" \
-  maintainer.email="cpaulino@gmail.com" \
+  maintainer="Gonzalo del Castillo" \
+  maintainer.email="gdc@postack.com.ar" \
   description="Android Build Docker image" \
-  repository="https://github.com/carlospaulino/android-builder"
+  repository="https://github.com/postack/android-builder"
+
+# Use baseimage-docker's init system.
+CMD ["/sbin/my_init"]
 
 # setup deps & java
 RUN apt-get update \
@@ -13,7 +17,8 @@ RUN apt-get update \
   && add-apt-repository ppa:webupd8team/java \
   && apt-get update \
   && apt-get install oracle-java8-set-default --yes \
-  && apt-get clean
+# Clean up APT when done.
+  && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # setup android sdk and android sdk licences
 RUN wget -O /opt/android-tools.zip https://dl.google.com/android/repository/tools_r25.2.3-linux.zip \
@@ -21,9 +26,7 @@ RUN wget -O /opt/android-tools.zip https://dl.google.com/android/repository/tool
   && mkdir -p /opt/android-sdk/licenses \
   && mv /opt/tools /opt/android-sdk/tools \
   && rm /opt/android-tools.zip \
-  && echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > /opt/android-sdk/licenses/android-sdk-license \
-  && echo "84831b9409646a918e30573bab4c9c91346d8abd" > /opt/android-sdk/licenses/android-sdk-preview-license \
-  && echo "d975f751698a77b662f1254ddbeed3901e976f5a" > /opt/android-sdk/licenses/intel-android-extra-license \
+  && echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > /opt/android-sdk/licenses/android-sdk-license \
   && mkdir ~/.android; echo "count=0" >> ~/.android/repositories.cfg
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-oracle \
@@ -39,5 +42,7 @@ RUN /opt/android-sdk/tools/bin/sdkmanager --package_file=/tmp/android-packages \
 # wrap up
 RUN mkdir /tmp/project \
   && echo "sdk.dir=$ANDROID_HOME" > /tmp/project/local.properties
+
+RUN /opt/android-sdk/tools/bin/sdkmanager --update
 
 WORKDIR /tmp/project

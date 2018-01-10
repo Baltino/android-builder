@@ -20,7 +20,7 @@ See [android-packages](./android-packages) for the full list of Android dependen
 Navigate to project folder and run:
 
 ```
-docker run --interactive --volume=$(pwd):/tmp/project android-builder:1.0 /bin/sh -c "./gradlew {MY_GRADLE_TASK}"
+docker run -i -v=$(pwd):/tmp/project postack/android-builder:latest /bin/sh -c "./gradlew {MY_GRADLE_TASK}"
 ```
 
 Replace `{MY_GRADLE_TASK}` with any gradle task such as `check` or `build`.
@@ -28,9 +28,10 @@ Replace `{MY_GRADLE_TASK}` with any gradle task such as `check` or `build`.
 # Finally
 Gradle is very memory hungry so give your container at least 4GB of RAM.
 
-# License
+# Credits & License
 
 Copyright (c) 2017 Carlos Paulino <cpaulino@gmail.com>.
+Copyright (c) 2018 Gonzalo del Castillo <gdc@postack.com.ar>.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
